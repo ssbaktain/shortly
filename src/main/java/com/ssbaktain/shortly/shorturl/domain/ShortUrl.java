@@ -1,0 +1,68 @@
+package com.ssbaktain.shortly.shorturl.domain;
+
+import com.ssbaktain.shortly.user.domain.User;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "short_url")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class ShortUrl {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "short_key", nullable = false, unique = true, length = 10)
+    private String shortKey;
+
+    @Column(name = "original_url", nullable = false, length = 2048)
+    private String originalUrl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @Column(name = "password_hash", length = 60)
+    private String passwordHash;
+
+    @Column(name = "expires_at")
+    private LocalDateTime expiresAt;
+
+    @Column(name = "click_count", nullable = false)
+    private Long clickCount = 0L;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updateAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updateAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updateAt = LocalDateTime.now();
+    }
+
+    @Builder
+    private ShortUrl(String shortKey, String originalUrl, User user,
+                     String passwordHash, LocalDateTime expiresAt) {
+        this.shortKey = shortKey;
+        this.originalUrl = originalUrl;
+        this.user = user;
+        this.passwordHash = passwordHash;
+        this.expiresAt = expiresAt;
+    }
+}
