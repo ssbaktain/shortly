@@ -65,4 +65,15 @@ public class ShortUrl {
         this.passwordHash = passwordHash;
         this.expiresAt = expiresAt;
     }
+
+    public void assignShortKey(String shortKey) {
+        this.shortKey = shortKey;
+    }
+
+    public boolean isExpired() {
+        if (this.expiresAt == null) {
+            return false;
+        }
+        return LocalDateTime.now().isAfter(this.expiresAt);
+    }
 }
