@@ -7,12 +7,12 @@
 ### 사용 중
 - **Language**: Java 21
 - **Framework**: Spring Boot 3.5.14
+- **Security**: Spring Security, JWT, Bucket4j
 - **Persistence**: Spring Data JPA, Hibernate
 - **Database**: MySQL 8
 - **Build**: Gradle (Kotlin DSL)
 
 ### 도입 예정
-- **Security**: Spring Security, JWT, Bucket4j
 - **Cache**: Redis 7
 - **Query**: Querydsl
 - **Frontend**: React, TypeScript
@@ -26,11 +26,11 @@
 - [x] URL 단축 API
 - [x] 단축 URL 리다이렉트 API
 - [x] 전역 예외 처리
+- [x] 회원 가입/로그인 (JWT 기반 인증)
 - [x] 도메인 모델 (User, ShortUrl)
 - [x] DB 영속성 계층
 
 ### 구현 예정
-- [ ] 회원 가입/로그인 (JWT 기반 인증)
 - [ ] 만료 시간 / 비밀번호 보호 옵션
 - [ ] 내 링크 관리 (목록, 수정, 삭제)
 - [ ] 클릭 통계 (총 클릭 수, 일별 클릭 수)
