@@ -48,3 +48,7 @@ application-secret.properties
 
 ### VS Code ###
 .vscode/
+
+### Logs ###
+logs/
+*.log
