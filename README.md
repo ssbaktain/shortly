@@ -7,7 +7,7 @@
 ### 사용 중
 - **Language**: Java 21
 - **Framework**: Spring Boot 3.5.14
-- **Security**: Spring Security, JWT, Bucket4j
+- **Security**: Spring Security, JWT
 - **Persistence**: Spring Data JPA, Hibernate
 - **Database**: MySQL 8
 - **Build**: Gradle (Kotlin DSL)
@@ -19,6 +19,7 @@
 - **Test**: JUnit 5, Mockito, k6
 - **Infra**: Docker Compose, GitHub Actions
 - **External API**: Google Safe Browsing API
+- **Rate Limiting**: Bucket4j
 
 ## ✨ 주요 기능
 
