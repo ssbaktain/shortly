@@ -1,6 +1,7 @@
 package com.ssbaktain.shortly.config;
 
 import com.ssbaktain.shortly.auth.jwt.JwtAuthenticationFilter;
+import com.ssbaktain.shortly.auth.jwt.JwtAuthenticationEntryPoint;
 import com.ssbaktain.shortly.auth.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -35,6 +37,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/{shortKey}").permitAll()
                         .anyRequest().authenticated()
                 )
+                .exceptionHandling(exception ->
+                        exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class);
 
