@@ -33,7 +33,7 @@ public class ShortUrlService {
         return saved;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public ShortUrl getOriginalUrl(String shortKey) {
         ShortUrl shortUrl = shortUrlRepository.findByShortKey(shortKey)
                 .orElseThrow(() -> new ShortUrlNotFoundException(shortKey));
@@ -42,6 +42,7 @@ public class ShortUrlService {
             throw new ShortUrlExpiredException(shortKey);
         }
 
+        shortUrl.increaseClickCount();
         return shortUrl;
     }
 

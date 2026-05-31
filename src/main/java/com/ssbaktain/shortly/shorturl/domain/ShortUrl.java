@@ -75,4 +75,8 @@ public class ShortUrl {
         }
         return LocalDateTime.now().isAfter(this.expiresAt);
     }
+
+    public void increaseClickCount() {
+        this.clickCount++;
+    }
 }
