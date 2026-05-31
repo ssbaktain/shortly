@@ -1,12 +1,11 @@
 package com.ssbaktain.shortly.shorturl.domain;
 
-import com.ssbaktain.shortly.user.domain.User;
+import com.ssbaktain.shortly.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
@@ -27,8 +26,8 @@ public class ShortUrl {
     private String originalUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @Column(name = "password_hash", length = 60)
     private String passwordHash;
@@ -43,25 +42,25 @@ public class ShortUrl {
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updateAt;
+    private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
-        this.updateAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        this.updateAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     @Builder
-    private ShortUrl(String shortKey, String originalUrl, User user,
+    private ShortUrl(String shortKey, String originalUrl, Member member,
                      String passwordHash, LocalDateTime expiresAt) {
         this.shortKey = shortKey;
         this.originalUrl = originalUrl;
-        this.user = user;
+        this.member = member;
         this.passwordHash = passwordHash;
         this.expiresAt = expiresAt;
     }

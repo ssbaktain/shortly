@@ -1,4 +1,4 @@
-package com.ssbaktain.shortly.user.dto;
+package com.ssbaktain.shortly.member.dto;
 
 import lombok.Builder;
 import lombok.Getter;

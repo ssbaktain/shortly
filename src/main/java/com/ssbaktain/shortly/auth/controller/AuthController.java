@@ -1,11 +1,11 @@
 package com.ssbaktain.shortly.auth.controller;
 
 import com.ssbaktain.shortly.auth.service.AuthService;
-import com.ssbaktain.shortly.user.domain.User;
-import com.ssbaktain.shortly.user.dto.LoginRequest;
-import com.ssbaktain.shortly.user.dto.SignupRequest;
-import com.ssbaktain.shortly.user.dto.TokenResponse;
-import com.ssbaktain.shortly.user.dto.UserResponse;
+import com.ssbaktain.shortly.member.domain.Member;
+import com.ssbaktain.shortly.member.dto.LoginRequest;
+import com.ssbaktain.shortly.member.dto.SignupRequest;
+import com.ssbaktain.shortly.member.dto.TokenResponse;
+import com.ssbaktain.shortly.member.dto.MemberResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,14 +23,14 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<UserResponse> signup(@Valid @RequestBody SignupRequest request) {
-        User user = authService.signup(
+    public ResponseEntity<MemberResponse> signup(@Valid @RequestBody SignupRequest request) {
+        Member member = authService.signup(
                 request.getEmail(),
                 request.getPassword(),
                 request.getNickname()
         );
 
-        UserResponse response = UserResponse.from(user);
+        MemberResponse response = MemberResponse.from(member);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

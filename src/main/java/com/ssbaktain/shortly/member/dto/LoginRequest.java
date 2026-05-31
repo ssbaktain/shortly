@@ -1,4 +1,4 @@
-package com.ssbaktain.shortly.user.dto;
+package com.ssbaktain.shortly.member.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

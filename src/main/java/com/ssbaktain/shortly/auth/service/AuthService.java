@@ -1,8 +1,8 @@
 package com.ssbaktain.shortly.auth.service;
 
 import com.ssbaktain.shortly.auth.jwt.JwtTokenProvider;
-import com.ssbaktain.shortly.user.domain.User;
-import com.ssbaktain.shortly.user.repository.UserRepository;
+import com.ssbaktain.shortly.member.domain.Member;
+import com.ssbaktain.shortly.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,36 +12,36 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
-    public User signup(String email, String password, String nickname) {
-        if (userRepository.existsByEmail(email)) {
+    public Member signup(String email, String password, String nickname) {
+        if (memberRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("Email already exists: " + email);
         }
 
         String encodedPassword = passwordEncoder.encode(password);
 
-        User user = User.builder()
+        Member member = Member.builder()
                 .email(email)
                 .password(encodedPassword)
                 .nickname(nickname)
                 .build();
 
-        return userRepository.save(user);
+        return memberRepository.save(member);
     }
 
     @Transactional(readOnly = true)
     public String login(String email, String password) {
-        User user = userRepository.findByEmail(email)
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        if (!passwordEncoder.matches(password, member.getPassword())) {
             throw new IllegalArgumentException("Invalid email or password");
         }
 
-        return jwtTokenProvider.generateToken(user.getId());
+        return jwtTokenProvider.generateToken(member.getId());
     }
 }

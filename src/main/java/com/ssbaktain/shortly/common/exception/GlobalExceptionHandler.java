@@ -2,7 +2,7 @@ package com.ssbaktain.shortly.common.exception;
 
 import com.ssbaktain.shortly.shorturl.exception.ShortUrlExpiredException;
 import com.ssbaktain.shortly.shorturl.exception.ShortUrlNotFoundException;
-import com.ssbaktain.shortly.user.exception.UserNotFoundException;
+import com.ssbaktain.shortly.member.exception.MemberNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +25,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handlerUserNotFound(
-            UserNotFoundException e, HttpServletRequest request) {
+    @ExceptionHandler(MemberNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handlerMemberNotFound(
+            MemberNotFoundException e, HttpServletRequest request) {
         ErrorResponse response = ErrorResponse.of(
                 HttpStatus.NOT_FOUND.value(),
                 "Not Found",

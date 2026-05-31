@@ -1,4 +1,4 @@
-package com.ssbaktain.shortly.user.domain;
+package com.ssbaktain.shortly.member.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user")
+@Table(name = "member")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,7 +45,7 @@ public class User {
     }
 
     @Builder
-    private User(String email, String password, String nickname) {
+    private Member(String email, String password, String nickname) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
