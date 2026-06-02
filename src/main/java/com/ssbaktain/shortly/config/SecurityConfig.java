@@ -35,6 +35,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/urls").permitAll()
                         .requestMatchers(HttpMethod.GET, "/{shortKey}").permitAll()
+                        .requestMatchers("/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception ->
