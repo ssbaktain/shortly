@@ -1,10 +1,14 @@
 package com.ssbaktain.shortly.shorturl.service;
 
 import com.ssbaktain.shortly.common.util.Base62Encoder;
+import com.ssbaktain.shortly.member.domain.Member;
+import com.ssbaktain.shortly.member.service.MemberService;
 import com.ssbaktain.shortly.shorturl.domain.ShortUrl;
 import com.ssbaktain.shortly.shorturl.exception.ShortUrlExpiredException;
 import com.ssbaktain.shortly.shorturl.exception.ShortUrlNotFoundException;
 import com.ssbaktain.shortly.shorturl.repository.ShortUrlRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,14 +19,18 @@ import org.springframework.stereotype.Service;
 public class ShortUrlService {
 
     private final ShortUrlRepository shortUrlRepository;
+    private final MemberService memberService;
 
     @Transactional
-    public ShortUrl shorten(String originalUrl) {
+    public ShortUrl shorten(String originalUrl, Long memberId) {
         validateUrl(originalUrl);
+
+        Member member = (memberId != null) ? memberService.getById(memberId) : null;
 
         ShortUrl shortUrl = ShortUrl.builder()
                 .shortKey("temp")
                 .originalUrl(originalUrl)
+                .member(member)
                 .build();
 
         ShortUrl saved = shortUrlRepository.save(shortUrl);
@@ -44,6 +52,11 @@ public class ShortUrlService {
 
         shortUrl.increaseClickCount();
         return shortUrl;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ShortUrl> findMyUrls(Long memberId, Pageable pageable) {
+        return shortUrlRepository.findByMemberId(memberId, pageable);
     }
 
     private void validateUrl(String url) {
