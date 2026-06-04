@@ -6,12 +6,17 @@ import com.ssbaktain.shortly.member.service.MemberService;
 import com.ssbaktain.shortly.shorturl.domain.ShortUrl;
 import com.ssbaktain.shortly.shorturl.exception.ShortUrlExpiredException;
 import com.ssbaktain.shortly.shorturl.exception.ShortUrlNotFoundException;
+import com.ssbaktain.shortly.shorturl.exception.ShortUrlPasswordMismatchException;
+import com.ssbaktain.shortly.shorturl.exception.ShortUrlPasswordRequiredException;
 import com.ssbaktain.shortly.shorturl.repository.ShortUrlRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 
 @Service
@@ -20,17 +25,24 @@ public class ShortUrlService {
 
     private final ShortUrlRepository shortUrlRepository;
     private final MemberService memberService;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public ShortUrl shorten(String originalUrl, Long memberId) {
+    public ShortUrl shorten(String originalUrl,
+                            Long memberId,
+                            LocalDateTime expiresAt,
+                            String password) {
         validateUrl(originalUrl);
 
         Member member = (memberId != null) ? memberService.getById(memberId) : null;
+        String passwordHash = (password != null)? passwordEncoder.encode(password) : null;
 
         ShortUrl shortUrl = ShortUrl.builder()
                 .shortKey("temp")
                 .originalUrl(originalUrl)
                 .member(member)
+                .passwordHash(passwordHash)
+                .expiresAt(expiresAt)
                 .build();
 
         ShortUrl saved = shortUrlRepository.save(shortUrl);
@@ -42,12 +54,21 @@ public class ShortUrlService {
     }
 
     @Transactional
-    public ShortUrl getOriginalUrl(String shortKey) {
+    public ShortUrl getOriginalUrl(String shortKey, String password) {
         ShortUrl shortUrl = shortUrlRepository.findByShortKey(shortKey)
                 .orElseThrow(() -> new ShortUrlNotFoundException(shortKey));
 
         if (shortUrl.isExpired()) {
             throw new ShortUrlExpiredException(shortKey);
+        }
+
+        if (shortUrl.isPasswordProtected()) {
+            if (password == null) {
+                throw new ShortUrlPasswordRequiredException(shortKey);
+            }
+            if (!passwordEncoder.matches(password, shortUrl.getPasswordHash())) {
+                throw new ShortUrlPasswordMismatchException(shortKey);
+            }
         }
 
         shortUrl.increaseClickCount();

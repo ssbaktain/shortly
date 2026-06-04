@@ -76,6 +76,10 @@ public class ShortUrl {
         return LocalDateTime.now().isAfter(this.expiresAt);
     }
 
+    public boolean isPasswordProtected() {
+        return this.passwordHash != null;
+    }
+
     public void increaseClickCount() {
         this.clickCount++;
     }

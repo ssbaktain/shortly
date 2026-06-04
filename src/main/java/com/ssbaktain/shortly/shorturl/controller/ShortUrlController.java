@@ -1,6 +1,7 @@
 package com.ssbaktain.shortly.shorturl.controller;
 
 import com.ssbaktain.shortly.shorturl.domain.ShortUrl;
+import com.ssbaktain.shortly.shorturl.dto.AccessRequest;
 import com.ssbaktain.shortly.shorturl.dto.MyUrlResponse;
 import com.ssbaktain.shortly.shorturl.dto.ShortenRequest;
 import com.ssbaktain.shortly.shorturl.dto.ShortenResponse;
@@ -33,7 +34,11 @@ public class ShortUrlController {
     public ResponseEntity<ShortenResponse> shorten(
             @Valid @RequestBody ShortenRequest request,
             @AuthenticationPrincipal Long memberId) {
-        ShortUrl shortUrl = shortUrlService.shorten(request.getOriginalUrl(), memberId);
+        ShortUrl shortUrl = shortUrlService.shorten(
+                request.getOriginalUrl(),
+                memberId,
+                request.getExpiresAt(),
+                request.getPassword());
         ShortenResponse response = ShortenResponse.from(shortUrl, baseUrl);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -49,7 +54,19 @@ public class ShortUrlController {
 
     @GetMapping("/{shortKey}")
     public ResponseEntity<Void> redirect(@PathVariable String shortKey) {
-        ShortUrl shortUrl = shortUrlService.getOriginalUrl(shortKey);
+        ShortUrl shortUrl = shortUrlService.getOriginalUrl(shortKey, null);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create(shortUrl.getOriginalUrl()));
+
+        return new ResponseEntity<>(headers, HttpStatus.FOUND);
+    }
+
+    @PostMapping("/{shortKey}")
+    public ResponseEntity<Void> redirectWithPassword(
+            @PathVariable String shortKey,
+            @Valid @RequestBody AccessRequest request) {
+        ShortUrl shortUrl = shortUrlService.getOriginalUrl(shortKey, request.getPassword());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create(shortUrl.getOriginalUrl()));

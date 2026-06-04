@@ -3,6 +3,8 @@ package com.ssbaktain.shortly.common.exception;
 import com.ssbaktain.shortly.shorturl.exception.ShortUrlExpiredException;
 import com.ssbaktain.shortly.shorturl.exception.ShortUrlNotFoundException;
 import com.ssbaktain.shortly.member.exception.MemberNotFoundException;
+import com.ssbaktain.shortly.shorturl.exception.ShortUrlPasswordMismatchException;
+import com.ssbaktain.shortly.shorturl.exception.ShortUrlPasswordRequiredException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -51,6 +53,30 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
         return ResponseEntity.status(HttpStatus.GONE).body(response);
+    }
+
+    @ExceptionHandler(ShortUrlPasswordRequiredException.class)
+    public ResponseEntity<ErrorResponse> handlerShortUrlPasswordRequired(
+            ShortUrlPasswordRequiredException e, HttpServletRequest request) {
+        ErrorResponse response = ErrorResponse.of(
+                HttpStatus.UNAUTHORIZED.value(),
+                "Unauthorized",
+                e.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    @ExceptionHandler(ShortUrlPasswordMismatchException.class)
+    public ResponseEntity<ErrorResponse> handlerShortUrlPasswordMismatch(
+            ShortUrlPasswordMismatchException e, HttpServletRequest request) {
+        ErrorResponse response = ErrorResponse.of(
+                HttpStatus.UNAUTHORIZED.value(),
+                "Unauthorized",
+                e.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
