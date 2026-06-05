@@ -1,0 +1,71 @@
+### 변수
+@host = http://localhost:9876
+
+### 1. 회귀 - 일반 URL 단축
+POST {{host}}/api/urls
+Content-Type: application/json
+
+{
+  "originalUrl": "https://www.google.com"
+}
+
+> {%
+client.global.set("plainKey", response.body.shortKey);
+ %}
+
+### 2. 회귀 - 단축 URL 리다이렉트 (302 -> google)
+# @no-redirect
+GET {{host}}/{{plainKey}}
+
+### 3. 검증 차단 - 과거 expiresAt (예상: 400)
+POST {{host}}/api/urls
+Content-Type: application/json
+
+{
+  "originalUrl": "https://www.naver.com",
+  "expiresAt": "2025-01-01T00:00:00"
+}
+
+### 4. 검증 차단 - 너무 짧은 비번 (예상: 400)
+POST {{host}}/api/urls
+Content-Type: application/json
+
+{
+  "originalUrl": "https://www.naver.com",
+  "password": "12"
+}
+
+### 5. 비번 보호 URL 생성 (예상: 201)
+POST {{host}}/api/urls
+Content-Type: application/json
+
+{
+  "originalUrl": "https://www.naver.com",
+  "password": "password123"
+}
+
+> {%
+client.global.set("protectedKey", response.body.shortKey);
+ %}
+
+### 6. 비번 URL GET - 비번 안 보냄 (예상: 401 PasswordRequired)
+# @no-redirect
+GET {{host}}/{{protectedKey}}
+
+### 7. 비번 URL POST - 틀린 비번 (예상: PasswordMismatch)
+# @no-redirect
+POST {{host}}/{{protectedKey}}
+Content-Type: application/json
+
+{
+  "password": "wrong123"
+}
+
+### 8. 비번 URL POST - 맞는 비번 (예상: 302 -> naver)
+# @no-redirect
+POST {{host}}/{{protectedKey}}
+Content-Type: application/json
+
+{
+  "password": "password123"
+}
