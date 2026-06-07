@@ -19,7 +19,12 @@ public class ShortUrl {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "short_key", nullable = false, unique = true, length = 10)
+    @Column(name = "short_key",
+            nullable = false,
+            unique = true,
+            length = 10,
+            columnDefinition = "VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+    )
     private String shortKey;
 
     @Column(name = "original_url", nullable = false, length = 2048)
