@@ -1,7 +1,7 @@
 ### 변수
 @host = http://localhost:9876
 
-### 1. 회귀 - 일반 URL 단축
+### 1. 회귀 - 일반 URL 단축 (예상: 201 + shortKey)
 POST {{host}}/api/urls
 Content-Type: application/json
 
@@ -13,7 +13,7 @@ Content-Type: application/json
 client.global.set("plainKey", response.body.shortKey);
  %}
 
-### 2. 회귀 - 단축 URL 리다이렉트 (302 -> google)
+### 2. 회귀 - 단축 URL 리다이렉트 (예상: 302 -> google)
 # @no-redirect
 GET {{host}}/{{plainKey}}
 
@@ -52,7 +52,7 @@ client.global.set("protectedKey", response.body.shortKey);
 # @no-redirect
 GET {{host}}/{{protectedKey}}
 
-### 7. 비번 URL POST - 틀린 비번 (예상: PasswordMismatch)
+### 7. 비번 URL POST - 틀린 비번 (예상: 401 PasswordMismatch)
 # @no-redirect
 POST {{host}}/{{protectedKey}}
 Content-Type: application/json
