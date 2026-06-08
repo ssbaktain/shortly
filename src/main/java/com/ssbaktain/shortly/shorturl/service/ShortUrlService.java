@@ -1,6 +1,5 @@
 package com.ssbaktain.shortly.shorturl.service;
 
-import com.ssbaktain.shortly.common.util.Base62Encoder;
 import com.ssbaktain.shortly.member.domain.Member;
 import com.ssbaktain.shortly.member.service.MemberService;
 import com.ssbaktain.shortly.shorturl.domain.ShortUrl;
@@ -9,6 +8,9 @@ import com.ssbaktain.shortly.shorturl.exception.ShortUrlNotFoundException;
 import com.ssbaktain.shortly.shorturl.exception.ShortUrlPasswordMismatchException;
 import com.ssbaktain.shortly.shorturl.exception.ShortUrlPasswordRequiredException;
 import com.ssbaktain.shortly.shorturl.repository.ShortUrlRepository;
+import com.ssbaktain.shortly.shorturl.util.ShortKeyGenerator;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ShortUrlService {
@@ -26,6 +28,8 @@ public class ShortUrlService {
     private final ShortUrlRepository shortUrlRepository;
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
+
+    private static final int MAX_RETRY = 3;
 
     @Transactional
     public ShortUrl shorten(String originalUrl,
@@ -37,20 +41,24 @@ public class ShortUrlService {
         Member member = (memberId != null) ? memberService.getById(memberId) : null;
         String passwordHash = (password != null)? passwordEncoder.encode(password) : null;
 
-        ShortUrl shortUrl = ShortUrl.builder()
-                .shortKey("temp")
-                .originalUrl(originalUrl)
-                .member(member)
-                .passwordHash(passwordHash)
-                .expiresAt(expiresAt)
-                .build();
+        for (int attempt = 0; attempt < MAX_RETRY; attempt++) {
+            String shortKey = ShortKeyGenerator.generate();
+            ShortUrl shortUrl = ShortUrl.builder()
+                    .shortKey(shortKey)
+                    .originalUrl(originalUrl)
+                    .member(member)
+                    .passwordHash(passwordHash)
+                    .expiresAt(expiresAt)
+                    .build();
 
-        ShortUrl saved = shortUrlRepository.save(shortUrl);
-
-        String shortKey = Base62Encoder.encode(saved.getId());
-        saved.assignShortKey(shortKey);
-
-        return saved;
+            try {
+                return shortUrlRepository.save(shortUrl);
+            } catch (DataIntegrityViolationException e) {
+                log.warn("shortKey collision on attempt {} - retrying", attempt + 1);
+            }
+        }
+        throw new IllegalStateException(
+                "Failed to generate unique shorKey after " + MAX_RETRY + " attempts");
     }
 
     @Transactional
