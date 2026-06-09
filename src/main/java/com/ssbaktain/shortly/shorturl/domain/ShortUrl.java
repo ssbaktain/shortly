@@ -80,8 +80,4 @@ public class ShortUrl {
     public boolean isPasswordProtected() {
         return this.passwordHash != null;
     }
-
-    public void increaseClickCount() {
-        this.clickCount++;
-    }
 }

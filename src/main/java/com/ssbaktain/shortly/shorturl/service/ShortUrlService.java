@@ -79,7 +79,7 @@ public class ShortUrlService {
             }
         }
 
-        shortUrl.increaseClickCount();
+        shortUrlRepository.incrementClickCount(shortUrl.getId());
         return shortUrl;
     }
 
