@@ -139,7 +139,7 @@ public class GlobalExceptionHandler {
             RateLimitExceededException e, HttpServletRequest request) {
         ErrorResponse response = ErrorResponse.of(
                 HttpStatus.TOO_MANY_REQUESTS.value(),
-                "Too Many Request",
+                "Too Many Requests",
                 e.getMessage(),
                 request.getRequestURI()
         );
