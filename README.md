@@ -80,7 +80,7 @@ DB 단일 statement 에 묶어 row lock 으로 직렬화.
 **4. 비밀번호 보호 URL brute-force 방어 (Bucket4j Token Bucket)**
 
 POST `/{shortKey}` 에 IP + shortKey 키 단위 Bucket4j 적용 (capacity 5, refill 분당 3 회).
-100 VU 30s brute-force 부하 → 차단율 99.999% (785,935 / 785,942), 시간당 실효 시도 약 185 회
+100 VU 30s brute-force 부하 → 차단율 99.999% (785,935 / 785,941), 시간당 실효 시도 약 185 회
 → 4 자리 숫자 비번 전수 54 시간 / 5 자리 22.5 일 → 사실상 비효율화. rate limit 거절은 Interceptor
 단계 컷이라 컨트롤러·service 진입 X — p95 7ms / RPS 26k.
 
@@ -110,7 +110,7 @@ POST `/{shortKey}` 에 IP + shortKey 키 단위 Bucket4j 적용 (capacity 5, ref
 
 | 지표 | 값 |
 |---|---|
-| 차단율 | 99.999% (785,935 / 785,942) |
+| 차단율 | 99.999% (785,935 / 785,941) |
 | 401 통과 (capacity + refill) | 6 |
 | RPS | 26,093 |
 | p95 | 7.01ms |
