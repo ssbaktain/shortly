@@ -8,6 +8,7 @@ import com.ssbaktain.shortly.shorturl.exception.ShortUrlPasswordRequiredExceptio
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -131,6 +132,22 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(RateLimitExceededException.class)
+    public ResponseEntity<ErrorResponse> handleRateLimitExceeded(
+            RateLimitExceededException e, HttpServletRequest request) {
+        ErrorResponse response = ErrorResponse.of(
+                HttpStatus.TOO_MANY_REQUESTS.value(),
+                "Too Many Request",
+                e.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity
+                .status(HttpStatus.TOO_MANY_REQUESTS)
+                .header(HttpHeaders.RETRY_AFTER,
+                        String.valueOf(e.getRetryAfterSeconds()))
+                .body(response);
     }
 
     @ExceptionHandler(Exception.class)
