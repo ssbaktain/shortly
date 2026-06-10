@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ShortUrlNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handlerShortUrlNotFound(
+    public ResponseEntity<ErrorResponse> handleShortUrlNotFound(
             ShortUrlNotFoundException e, HttpServletRequest request) {
         ErrorResponse response = ErrorResponse.of(
                 HttpStatus.NOT_FOUND.value(),
@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MemberNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handlerMemberNotFound(
+    public ResponseEntity<ErrorResponse> handleMemberNotFound(
             MemberNotFoundException e, HttpServletRequest request) {
         ErrorResponse response = ErrorResponse.of(
                 HttpStatus.NOT_FOUND.value(),
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ShortUrlExpiredException.class)
-    public ResponseEntity<ErrorResponse> handlerShortUrlExpired(
+    public ResponseEntity<ErrorResponse> handleShortUrlExpired(
             ShortUrlExpiredException e, HttpServletRequest request) {
         ErrorResponse response = ErrorResponse.of(
                 HttpStatus.GONE.value(),
@@ -56,7 +56,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ShortUrlPasswordRequiredException.class)
-    public ResponseEntity<ErrorResponse> handlerShortUrlPasswordRequired(
+    public ResponseEntity<ErrorResponse> handleShortUrlPasswordRequired(
             ShortUrlPasswordRequiredException e, HttpServletRequest request) {
         ErrorResponse response = ErrorResponse.of(
                 HttpStatus.UNAUTHORIZED.value(),
@@ -68,7 +68,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ShortUrlPasswordMismatchException.class)
-    public ResponseEntity<ErrorResponse> handlerShortUrlPasswordMismatch(
+    public ResponseEntity<ErrorResponse> handleShortUrlPasswordMismatch(
             ShortUrlPasswordMismatchException e, HttpServletRequest request) {
         ErrorResponse response = ErrorResponse.of(
                 HttpStatus.UNAUTHORIZED.value(),
@@ -80,7 +80,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handlerIllegalArgument(
+    public ResponseEntity<ErrorResponse> handleIllegalArgument(
             IllegalArgumentException e, HttpServletRequest request) {
         ErrorResponse response = ErrorResponse.of(
                 HttpStatus.BAD_REQUEST.value(),
@@ -109,7 +109,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ErrorResponse> handlerMethodNotAllowed(
+    public ResponseEntity<ErrorResponse> handleMethodNotAllowed(
             HttpRequestMethodNotSupportedException e, HttpServletRequest request) {
         ErrorResponse response = ErrorResponse.of(
                 HttpStatus.METHOD_NOT_ALLOWED.value(),
@@ -121,7 +121,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> handlerDataIntegrityViolation(
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(
             DataIntegrityViolationException e, HttpServletRequest request) {
         log.warn("DB constraint violation at {}: {}", request.getRequestURI(), e.getMessage());
         ErrorResponse response = ErrorResponse.of(
@@ -134,7 +134,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handlerGenericException(
+    public ResponseEntity<ErrorResponse> handleGenericException(
             Exception e, HttpServletRequest request) {
         log.error("Unhandled exception at {}: {}", request.getRequestURI(), e.getMessage(), e);
         ErrorResponse response = ErrorResponse.of(
