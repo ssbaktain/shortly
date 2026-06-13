@@ -13,13 +13,13 @@
 - **API Docs**: SpringDoc OpenAPI / Swagger UI
 - **Load Test**: k6
 - **Rate Limiting**: Bucket4j
+- **Test**: JUnit 5, Mockito
 - **Build**: Gradle (Kotlin DSL)
 
 ### 도입 예정
 - **Cache**: Redis 7
 - **Query**: Querydsl
 - **Frontend**: React, TypeScript
-- **Unit Test**: JUnit 5, Mockito
 - **Infra**: Docker Compose, GitHub Actions
 - **External API**: Google Safe Browsing API
 
